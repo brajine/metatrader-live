@@ -6,6 +6,8 @@
 class MTLive {
 private:
    static int       socket;
+   static int       serverPort;
+   static string    serverIp;
    static string    self_name;
    static string    get_page();
    static string    get_freq();
@@ -15,13 +17,15 @@ private:
    static void      make_diff(TradesMsg &msg, bool reset);
    static void      compose_data(TradesMsg &msg, bool reset);
 public:
-   static void      Init();
+   static void      Init(string ip, int port);
+   static int       Update();
    static void      DeInit();
-   static void      Update(string ip, int port);
 };
 
 string MTLive::self_name = "MTLive: ";
 int    MTLive::socket   = -1;
+int    MTLive::serverPort = 8181;
+string MTLive::serverIp = "metatrader.live";
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -42,7 +46,7 @@ string MTLive::get_freq() {
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-void MTLive::Init() {
+void MTLive::Init(string ip, int port) {
    // Currently, maximum update rate allowed is one message per second.
    // Please don't exceed update frequency as the server may ban such connection.
    switch ( updateFreq ) {
@@ -53,6 +57,10 @@ void MTLive::Init() {
    default:
       EventSetTimer(60);
    }
+   
+   MTLive::serverIp = ip;
+   MTLive::serverPort = port;
+   if ( MTLive::Update() >= 0 ) Print(MTLive::self_name, "Connection is successful");
 }
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -76,7 +84,7 @@ void MTLive::log_print(int code, int recon) {
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-void MTLive::Update(string ip, int port) {
+int MTLive::Update() {
    // Progressive reconnect delay up to 32s
    const int maxDelay = 32;
    static int prevSec = 1;
@@ -85,7 +93,7 @@ void MTLive::Update(string ip, int port) {
    
    if ( delaySec > 0 ) {
       if ( (TimeLocal() - timeErr) < delaySec ) {
-         return;
+         return -1;
       }
       delaySec ^= delaySec;
    }
@@ -94,7 +102,7 @@ void MTLive::Update(string ip, int port) {
       if ( MTLive::socket > 0 && !SocketIsConnected(MTLive::socket) ) {
          SocketClose(MTLive::socket);
          MTLive::socket = -1;
-         return;
+         return -1;
       }
       
       if ( MTLive::socket < 0 ) {
@@ -105,17 +113,17 @@ void MTLive::Update(string ip, int port) {
             timeErr = TimeLocal();
             delaySec = prevSec;
             if ( prevSec != maxDelay ) prevSec *= 2;
-            return;
+            return -1;
          }
       }
    
       if ( !SocketIsConnected(MTLive::socket) ) {
-         if ( !SocketConnect(socket, ip, port, 1000) ) {
+         if ( !SocketConnect(socket, MTLive::serverIp, MTLive::serverPort, 1000) ) {
             log_print(GetLastError(), prevSec);
             timeErr = TimeLocal();
             delaySec = prevSec;
             if ( prevSec != maxDelay ) prevSec *= 2;
-            return;
+            return -1;
          }
       }
    }
@@ -125,12 +133,11 @@ void MTLive::Update(string ip, int port) {
    MTLive::compose_data(msg, !(prevSec == 1));
    int sent = MTTransport::Send(socket, msg, !(prevSec == 1));
    if ( sent < 0 ) {
-      Print("Update() can not Send()");
       log_print(GetLastError(), prevSec);
       timeErr = TimeLocal();
       delaySec = prevSec;
       if ( prevSec != maxDelay ) prevSec *= 2;
-      return;
+      return -1;
    }
    
    // Read response
@@ -140,19 +147,19 @@ void MTLive::Update(string ip, int port) {
       if ( !empty(resp.Error) ) {
          Print(MTLive::self_name, "Server returned error: ", resp.Error);
          ExpertRemove();
+         return -1;
       }
    } else {
       log_print(GetLastError(), prevSec);
       timeErr = TimeLocal();
       delaySec = prevSec;
       if ( prevSec != maxDelay ) prevSec *= 2;
-      return;
+      return -1;
    }
-   
-   Print("Message sent(", sent, "bytes), responce received");
    
    // Message sent succeessfully
    prevSec = 1;
+   return 0;
 }
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
