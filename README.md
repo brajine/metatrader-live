@@ -33,7 +33,7 @@ MQL5 client for http://metatrader.live
 
 ![Metatrader Allow WebRequest](/img/allow-web-request.png "Metatrader Allow WebRequest")
 
-После этого можно скомпилировать и запускать советника на любом ценовом графике, указав псевдоним для публикации (`Page name`) и частоту обновления данных.
+После этого можно скомпилировать и запускать советника на любом ценовом графике, указав псевдоним для публикации `Page name` и частоту обновления данных.
 
 ![EA Input parameters](/img/input-parameters.png "EA Input parameters")
 
