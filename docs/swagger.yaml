@@ -1,0 +1,135 @@
+definitions:
+  metatrader.Account:
+    properties:
+      balance:
+        type: string
+      clientversion:
+        type: string
+      company:
+        type: string
+      equity:
+        type: string
+      freemargin:
+        type: string
+      login:
+        type: string
+      margin:
+        type: string
+      marginlevel:
+        type: string
+      name:
+        type: string
+      orders:
+        additionalProperties:
+          $ref: '#/definitions/metatrader.Order'
+        description: Use Ticket as a map key
+        type: object
+      orderscount:
+        type: integer
+      page:
+        type: string
+      profittotal:
+        type: string
+      server:
+        type: string
+      started:
+        description: Connection established
+        type: string
+      updated:
+        description: Last time account was updated
+        type: string
+      updatefreq:
+        type: string
+    type: object
+  metatrader.Order:
+    properties:
+      curvolume:
+        type: string
+      initvolume:
+        type: string
+      priceopen:
+        type: string
+      pricesl:
+        type: string
+      profit:
+        type: string
+      sl:
+        type: string
+      swap:
+        type: string
+      symbol:
+        type: string
+      timeopen:
+        type: string
+      tp:
+        type: string
+      type:
+        type: string
+    type: object
+  metatrader.StateData:
+    properties:
+      accounts:
+        items:
+          $ref: '#/definitions/metatrader.StateEntry'
+        type: array
+      online:
+        type: integer
+    type: object
+  metatrader.StateEntry:
+    properties:
+      page:
+        type: string
+      started:
+        type: string
+      updateFreq:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Swagger API doc for Metatrader.live.
+  title: Metatrader.live API
+  version: "1.0"
+paths:
+  /api/rest/{page}:
+    get:
+      parameters:
+      - description: Account Page name
+        in: path
+        name: page
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/metatrader.Account'
+      summary: Provide actual data on connected account
+  /api/stats:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/metatrader.StateData'
+      summary: Provide actual list of connected accounts
+  /api/wss/{page}:
+    get:
+      parameters:
+      - description: Account Page name
+        in: path
+        name: page
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/metatrader.Account'
+      summary: Provide actual data on connected account via WebSocket connection
+swagger: "2.0"

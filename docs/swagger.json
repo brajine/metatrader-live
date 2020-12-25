@@ -1,0 +1,207 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Swagger API doc for Metatrader.live.",
+        "title": "Metatrader.live API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/rest/{page}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Provide actual data on connected account",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Account Page name",
+                        "name": "page",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/metatrader.Account"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/stats": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Provide actual list of connected accounts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/metatrader.StateData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/wss/{page}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Provide actual data on connected account via WebSocket connection",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Account Page name",
+                        "name": "page",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/metatrader.Account"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "metatrader.Account": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "string"
+                },
+                "clientversion": {
+                    "type": "string"
+                },
+                "company": {
+                    "type": "string"
+                },
+                "equity": {
+                    "type": "string"
+                },
+                "freemargin": {
+                    "type": "string"
+                },
+                "login": {
+                    "type": "string"
+                },
+                "margin": {
+                    "type": "string"
+                },
+                "marginlevel": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "orders": {
+                    "description": "Use Ticket as a map key",
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/metatrader.Order"
+                    }
+                },
+                "orderscount": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "string"
+                },
+                "profittotal": {
+                    "type": "string"
+                },
+                "server": {
+                    "type": "string"
+                },
+                "started": {
+                    "description": "Connection established",
+                    "type": "string"
+                },
+                "updated": {
+                    "description": "Last time account was updated",
+                    "type": "string"
+                },
+                "updatefreq": {
+                    "type": "string"
+                }
+            }
+        },
+        "metatrader.Order": {
+            "type": "object",
+            "properties": {
+                "curvolume": {
+                    "type": "string"
+                },
+                "initvolume": {
+                    "type": "string"
+                },
+                "priceopen": {
+                    "type": "string"
+                },
+                "pricesl": {
+                    "type": "string"
+                },
+                "profit": {
+                    "type": "string"
+                },
+                "sl": {
+                    "type": "string"
+                },
+                "swap": {
+                    "type": "string"
+                },
+                "symbol": {
+                    "type": "string"
+                },
+                "timeopen": {
+                    "type": "string"
+                },
+                "tp": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "metatrader.StateData": {
+            "type": "object",
+            "properties": {
+                "accounts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/metatrader.StateEntry"
+                    }
+                },
+                "online": {
+                    "type": "integer"
+                }
+            }
+        },
+        "metatrader.StateEntry": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "string"
+                },
+                "started": {
+                    "type": "string"
+                },
+                "updateFreq": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
