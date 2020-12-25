@@ -2,7 +2,7 @@
 
 Публикация торговых данных из терминала Metatrader в WEB (доступно REST API, WebSockets, HTML). MQL5 клиент (торговый эксперт) для [metatrader.live](https://metatrader.live).
 
-- [Введение]()
+- [Введение](https://github.com/brajine/metatrader-live#введение)
 - [Безопасность данных](https://github.com/brajine/metatrader-live#безопасность-данных)
 - [Передача данных и нагрузка на сеть](https://github.com/brajine/metatrader-live#передача-данных-и-нагрузка-на-сеть)
 - [Системные требования](https://github.com/brajine/metatrader-live#системные-требования)
@@ -51,4 +51,4 @@
 Если все было сделано правильно, торговые данные уже доступны `online`. Можно открыть интернет-браузер и перейти по адресу `metatrader.live/accounts/{Page name}`.
 
 ## Swagger API
-Рендер API в формате Swagger можно посмотреть [здесь](http://petstore.swagger.io/?url=https://github.com/brajine/metatrader-live/blob/master/docs/swagger.yaml). Raw-файлы в формате Swagger находятся в папке `/docs`.
+Рендер API в формате Swagger можно посмотреть [здесь](https://editor.swagger.io/#/?import=https://github.com/brajine/metatrader-live/blob/master/docs/swagger.yaml). Raw-файлы в формате Swagger находятся в папке `/docs`.
