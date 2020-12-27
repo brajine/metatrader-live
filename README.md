@@ -16,7 +16,7 @@
 Данный проект предоставляет собой **сервис передачи торговых данных в сеть Интернет**. Обновление данных выполняется каждую минуту или каждую секунду - по Вашему выбору. Передаваемые терминалом данные сразу доступны `online` - регистрация не требуется. Данные предоставляются несколькими способами:
 1. WEB-страница `metatrader.live/accounts/{Page name}`
 2. REST API `metatrader.live/api/rest/{Page name}`
-3. WebSockets API `metatrader.live/api/ws/{Page name}`
+3. WebSockets API `metatrader.live/api/wss/{Page name}`
 
 ## Безопасность данных
 Проект изначально разрабатывался чтобы быть максимально безопасным. Вы сами решаете, какие данные об аккаунте будут передаваться - либо не передаваться совсем. Публикация только торговых данных без данных об аккаунте делает вашу публикацию обезличенной.
@@ -51,4 +51,4 @@
 Если все было сделано правильно, торговые данные уже доступны `online`. Можно открыть интернет-браузер и перейти по адресу `metatrader.live/accounts/{Page name}`.
 
 ## Swagger API
-Рендер API в формате Swagger можно посмотреть [здесь](https://editor.swagger.io/#/?import=https://github.com/brajine/metatrader-live/blob/master/docs/swagger.yaml). Raw-файлы в формате Swagger находятся в папке `/docs`.
+Формат отдаваемых сервером данных (REST API) можно посмотреть здесь: [metatrager.live/api/swagger](https://metatrader.live/api/swagger)
