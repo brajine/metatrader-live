@@ -11,7 +11,7 @@ private:
    static string    self_name;
    static string    get_page();
    static string    get_freq();
-   static void      log_print(int code, int recon);
+   static void      err_print(int code);
    static void      print_msg(TradesMsg &msg);
    static bool      empty(string str);
    static void      make_diff(TradesMsg &msg, bool reset);
@@ -24,8 +24,8 @@ public:
 
 string MTLive::self_name = "MTLive: ";
 int    MTLive::socket   = -1;
-int    MTLive::serverPort = 8181;
-string MTLive::serverIp = "metatrader.live";
+int    MTLive::serverPort;
+string MTLive::serverIp;
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -47,8 +47,13 @@ string MTLive::get_freq() {
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 void MTLive::Init(string ip, int port) {
+   if ( empty(ip) || port <= 0 || port >= 65536 ) {
+      Print(MTLive::self_name, "Server address or port is not provided");
+      return;
+   }
+   
    // Currently, maximum update rate allowed is one message per second.
-   // Please don't exceed update frequency as the server may ban such connection.
+   // Please don't exceed update frequency as server may ban such connection.
    switch ( updateFreq ) {
    case oneSecond: 
       EventSetTimer(1);
@@ -60,7 +65,7 @@ void MTLive::Init(string ip, int port) {
    
    MTLive::serverIp = ip;
    MTLive::serverPort = port;
-   if ( MTLive::Update() >= 0 ) Print(MTLive::self_name, "Connection is successful");
+   MTLive::Update();
 }
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -72,93 +77,70 @@ void MTLive::DeInit() {
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-void MTLive::log_print(int code, int recon) {
+void MTLive::err_print(int code) {
    // Output network error description
    switch ( code ) {
       case 4014: Print(MTLive::self_name, "WebRequest is not allowed. Please add \"", Ip, "\" in Tools > Options > Expert Advisors"); ExpertRemove(); break;
-      case 5272: Print(MTLive::self_name, "Server is not available, retry in ", recon, "s"); break;
-      case 5273: Print(MTLive::self_name, "Server refuses connection, retry in ", recon, "s"); break;
-      default: Print(MTLive::self_name, "Error ", code, ": can not connect to server, retry in ", recon, "s");
+      case 5272: Print(MTLive::self_name, "Server is not available"); break;
+      case 5273: Print(MTLive::self_name, "Server refuses connection"); break;
+      default: Print(MTLive::self_name, "Error ", code, ": can not connect to server");
    }
 }
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 int MTLive::Update() {
-   // Progressive reconnect delay up to 32s
-   const int maxDelay = 32;
-   static int prevSec = 1;
-   static int delaySec = 0;
-   static datetime timeErr;
-   
-   if ( delaySec > 0 ) {
-      if ( (TimeLocal() - timeErr) < delaySec ) {
-         return -1;
-      }
-      delaySec ^= delaySec;
-   }
-   
+   static bool sync = false;
+   // Try to reconnect if socket is not writable
    if ( !SocketIsWritable(MTLive::socket) ) {
-      if ( MTLive::socket > 0 && !SocketIsConnected(MTLive::socket) ) {
-         SocketClose(MTLive::socket);
-         MTLive::socket = -1;
+      SocketClose(MTLive::socket);
+
+      MTLive::socket = SocketCreate(SOCKET_DEFAULT);
+      if ( MTLive::socket == INVALID_HANDLE ) {            
+         err_print(GetLastError());
          return -1;
       }
-      
-      if ( MTLive::socket < 0 ) {
-         MTLive::socket = SocketCreate(SOCKET_DEFAULT);
-         if ( socket == INVALID_HANDLE ) {            
-            int code = GetLastError();
-            log_print(code, prevSec);
-            timeErr = TimeLocal();
-            delaySec = prevSec;
-            if ( prevSec != maxDelay ) prevSec *= 2;
-            return -1;
-         }
-      }
    
-      if ( !SocketIsConnected(MTLive::socket) ) {
-         if ( !SocketConnect(socket, MTLive::serverIp, MTLive::serverPort, 1000) ) {
-            log_print(GetLastError(), prevSec);
-            timeErr = TimeLocal();
-            delaySec = prevSec;
-            if ( prevSec != maxDelay ) prevSec *= 2;
-            return -1;
-         }
+      bool connected = SocketConnect(MTLive::socket, MTLive::serverIp, MTLive::serverPort, 1000);
+      if ( !connected ) {
+         err_print(GetLastError());
+         return -1;
       }
+      sync = true;
    }
 
+   // Failed to reconnect
+   if ( !SocketIsWritable(MTLive::socket) ) {
+      return 01;
+   }
+   
+   if ( sync ) Print(MTLive::self_name, "Connection is successful");
+   
    // Send encoded message
    TradesMsg msg;
-   MTLive::compose_data(msg, !(prevSec == 1));
-   int sent = MTTransport::Send(socket, msg, !(prevSec == 1));
-   if ( sent < 0 ) {
-      log_print(GetLastError(), prevSec);
-      timeErr = TimeLocal();
-      delaySec = prevSec;
-      if ( prevSec != maxDelay ) prevSec *= 2;
+   MTLive::compose_data(msg, sync);
+   bool sent = MTTransport::Send(socket, msg, sync);
+   if ( !sent ) {
+      err_print(GetLastError());
       return -1;
    }
-   
+
    // Read response
    ResponseMsg resp;
-   if ( MTTransport::Recv(socket, resp) ) {
-      if ( !empty(resp.Message) ) Print(MTLive::self_name, resp.Message);
-      if ( !empty(resp.Error) ) {
-         Print(MTLive::self_name, "Server returned error: ", resp.Error);
-         ExpertRemove();
-         return -1;
-      }
-   } else {
-      log_print(GetLastError(), prevSec);
-      timeErr = TimeLocal();
-      delaySec = prevSec;
-      if ( prevSec != maxDelay ) prevSec *= 2;
+   bool received = MTTransport::Recv(socket, resp);
+   if ( !received ) {
+      err_print(GetLastError());
       return -1;
    }
    
-   // Message sent succeessfully
-   prevSec = 1;
+   if ( !empty(resp.Message) ) Print(MTLive::self_name, resp.Message);
+   if ( !empty(resp.Error) ) {
+      Print(MTLive::self_name, "Server returned error: ", resp.Error);
+      ExpertRemove();
+      return -1;
+   }
+
+   sync = false;
    return 0;
 }
 

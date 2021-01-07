@@ -100,7 +100,7 @@ bool MTTransportTest::Page() {
    ZeroMemory(msg);
    msg.Page = "page";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -111,7 +111,7 @@ bool MTTransportTest::ClientVersion() {
    ZeroMemory(msg);
    msg.ClientVersion = "1.0";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -122,7 +122,7 @@ bool MTTransportTest::UpdateFrequency() {
    ZeroMemory(msg);
    msg.UpdateFreq = "second";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -133,7 +133,7 @@ bool MTTransportTest::Name() {
    ZeroMemory(msg);
    msg.Name = "name";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -144,7 +144,7 @@ bool MTTransportTest::Login() {
    ZeroMemory(msg);
    msg.Login = "login";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -155,7 +155,7 @@ bool MTTransportTest::Server() {
    ZeroMemory(msg);
    msg.Server = "server";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -166,7 +166,7 @@ bool MTTransportTest::Company() {
    ZeroMemory(msg);
    msg.Company = "company";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -177,7 +177,7 @@ bool MTTransportTest::Balance() {
    ZeroMemory(msg);
    msg.Balance = "balance";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -188,7 +188,7 @@ bool MTTransportTest::Equity() {
    ZeroMemory(msg);
    msg.Equity = "equity";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -199,7 +199,7 @@ bool MTTransportTest::Margin() {
    ZeroMemory(msg);
    msg.Margin = "margin";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -210,7 +210,7 @@ bool MTTransportTest::FreeMargin() {
    ZeroMemory(msg);
    msg.FreeMargin = "freemargin";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -221,7 +221,7 @@ bool MTTransportTest::MarginLevel() {
    ZeroMemory(msg);
    msg.MarginLevel = "marginlevel";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -232,7 +232,7 @@ bool MTTransportTest::ProfitTotal() {
    ZeroMemory(msg);
    msg.ProfitTotal = "profittotal";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -244,7 +244,7 @@ bool MTTransportTest::OrderTicket() {
    ArrayResize(msg.Orders, 1);
    msg.Orders[0].Ticket = "111";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -257,7 +257,7 @@ bool MTTransportTest::OrderMarket() {
    msg.Orders[0].Ticket = "111";
    msg.Orders[0].Market = "market";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -270,7 +270,7 @@ bool MTTransportTest::OrderTimeOpen() {
    msg.Orders[0].Ticket = "111";
    msg.Orders[0].TimeOpen = "timeopen";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -283,7 +283,7 @@ bool MTTransportTest::OrderType() {
    msg.Orders[0].Ticket = "111";
    msg.Orders[0].Type = "type";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -296,7 +296,7 @@ bool MTTransportTest::OrderInitVolume() {
    msg.Orders[0].Ticket = "111";
    msg.Orders[0].InitVolume = "initvolume";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -309,7 +309,7 @@ bool MTTransportTest::OrderCurVolume() {
    msg.Orders[0].Ticket = "111";
    msg.Orders[0].CurVolume = "curvolume";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -322,7 +322,7 @@ bool MTTransportTest::OrderPriceOpen() {
    msg.Orders[0].Ticket = "111";
    msg.Orders[0].PriceOpen = "priceopen";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -335,7 +335,7 @@ bool MTTransportTest::OrderStopLoss() {
    msg.Orders[0].Ticket = "111";
    msg.Orders[0].SL = "stoploss";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -348,7 +348,7 @@ bool MTTransportTest::OrderTakeProfit() {
    msg.Orders[0].Ticket = "111";
    msg.Orders[0].TP = "takeprofit";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -361,7 +361,7 @@ bool MTTransportTest::OrderSwap() {
    msg.Orders[0].Ticket = "111";
    msg.Orders[0].Swap = "swap";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -374,7 +374,7 @@ bool MTTransportTest::OrderPriceSL() {
    msg.Orders[0].Ticket = "111";
    msg.Orders[0].PriceSL = "pricesl";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -387,7 +387,7 @@ bool MTTransportTest::OrderProfit() {
    msg.Orders[0].Ticket = "111";
    msg.Orders[0].Profit = "profit";
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -429,7 +429,7 @@ bool MTTransportTest::HeavyMessage() {
       msg.Orders[i].Profit = tick;
    }
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 
@@ -439,7 +439,7 @@ bool MTTransportTest::Connection() {
    TradesMsg msg;
    ZeroMemory(msg);
 
-   if ( MTTransport::Send(socket, msg, false) >= 0 ) return true;
+   if ( MTTransport::Send(socket, msg, false) ) return true;
    return false;
 }
 

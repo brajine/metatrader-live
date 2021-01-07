@@ -71,11 +71,12 @@ private:
    static bool empty(string str);
 public:
    static bool Recv(int socket, ResponseMsg &resp);
-   static int  Send(int socket, TradesMsg &msg, bool reset);
+   static bool Send(int socket, TradesMsg &msg, bool reset);
 };
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+// Return false in case of error
 bool MTTransport::Recv(int socket, ResponseMsg &resp) {
    const int ch = 3;
    int n, len;
@@ -104,11 +105,11 @@ bool MTTransport::Recv(int socket, ResponseMsg &resp) {
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-int MTTransport::Send(int socket, TradesMsg &msg, bool reset) {
+bool MTTransport::Send(int socket, TradesMsg &msg, bool reset) {
    char data[];   
    encode_message(data, msg, reset);
    int s = SocketSend(socket, data, ArraySize(data));
-   return s;
+   return s > 0;
 }
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
