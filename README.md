@@ -82,4 +82,4 @@ If everything was done correctly, the data is already online. Point your Interne
 API data format (REST API) is available: [metatrager.live/api/swagger](https://metatrader.live/api/swagger)
 
 ## License
-The content of this project itself and the underlying source code are licensed under the [MIT license](/README.md/blob/master/LICENSE).
+The content of this project itself and the underlying source code are licensed under the [MIT license](/LICENSE).

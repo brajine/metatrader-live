@@ -2,7 +2,7 @@
 
 <p align="center">
   <span>Pусский</span> |
-  <a href="/lang/README_ru.md/tree/master/README.md">English</a>
+  <a href="/README.md">English</a>
 </p>
 
 Публикация торговых данных из терминала Metatrader в WEB (доступно REST API, WebSockets, HTML). MQL5 клиент (торговый эксперт) для [metatrader.live](https://metatrader.live).
@@ -82,4 +82,4 @@ void OnDeinit(const int reason) {
 Формат отдаваемых сервером данных (REST API) можно посмотреть здесь: [metatrager.live/api/swagger](https://metatrader.live/api/swagger)
 
 ## Лицензия
-Проект и его исходные коды открыты под лицензией [MIT](https://github.com/brajine/metatrader-live/blob/master/LICENSE).
+Проект и его исходные коды открыты под лицензией [MIT](/LICENSE).
