@@ -2,7 +2,7 @@
 
 <p align="center">
   <span>Pусский</span> |
-  <a href="https://github.com/brajine/metatrader-live/blob/master/README.md">English</a>
+  <a href="https://github.com/brajine/metatrader-live">English</a>
 </p>
 
 Публикация торговых данных из терминала Metatrader в WEB (доступно REST API, WebSockets, HTML). MQL5 клиент (торговый эксперт) для [metatrader.live](https://metatrader.live).
