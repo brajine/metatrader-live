@@ -2,20 +2,20 @@
 
 <p align="center">
   <span>English</span> |
-  <a href="/lang/README_ru.md">Pусский</a>
+  <a href="https://github.com/brajine/metatrader-live/blob/master/lang/README_ru.md">Pусский</a>
 </p>
 
 Trade data publishing from the Metatrader terminal to the WEB (REST API, WebSockets, HTML available). MQL5 client module (Expert Advisor) for metatrader.live service.
 
-- [Introduction](/README.md#introduction)
-- [Usage](/README.md#usage)
-- [Data safety](/README.md#data-safety)
-- [Data transfer and network load](/README.md#data-transfer-and-network-load)
-- [System requirements](/README.md#system-requirements)
-- [Limitations](/README.md#limitations)
-- [Installation](/README.md#installation)
-- [Swagger API](/README.md#swagger-api)
-- [License](/README.md#license)
+- [Introduction](https://github.com/brajine/metatrader-live/blob/master/README.md#introduction)
+- [Usage](https://github.com/brajine/metatrader-live/blob/master/README.md#usage)
+- [Data safety](https://github.com/brajine/metatrader-live/blob/master/README.md#data-safety)
+- [Data transfer and network load](https://github.com/brajine/metatrader-live/blob/master/README.md#data-transfer-and-network-load)
+- [System requirements](https://github.com/brajine/metatrader-live/blob/master/README.md#system-requirements)
+- [Limitations](https://github.com/brajine/metatrader-live/blob/master/README.md#limitations)
+- [Installation](https://github.com/brajine/metatrader-live/blob/master/README.md#installation)
+- [Swagger API](https://github.com/brajine/metatrader-live/blob/master/README.md#swagger-api)
+- [License](https://github.com/brajine/metatrader-live/blob/master/README.md#license)
 
 ## Introduction
 `Metatrader` is one of the most common tools for accessing the `Forex` market. The built-in programming language `MQL5` designed to implement complex automated trading strategies, and is one of the reasons for the high popularity of the `Metatrader` terminal. However, today more and more traders need not only market access, but also a reliable way of data delivering to the `Web`. Unfortunately, the `Metatrader` terminal provides only basic internet access functions.
