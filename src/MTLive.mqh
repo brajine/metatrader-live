@@ -11,11 +11,12 @@ private:
    static string    self_name;
    static string    get_page();
    static string    get_freq();
-   static void      err_print(int code);
+   static void      err_print(int code, int delay);
    static void      print_msg(TradesMsg &msg);
    static bool      empty(string str);
    static void      make_diff(TradesMsg &msg, bool reset);
    static void      compose_data(TradesMsg &msg, bool reset);
+   static int       checkConnection();
 public:
    static void      Init(string ip, int port);
    static int       Update();
@@ -77,51 +78,80 @@ void MTLive::DeInit() {
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-void MTLive::err_print(int code) {
+void MTLive::err_print(int code, int delay) {
    // Output network error description
    switch ( code ) {
       case 4014: Print(MTLive::self_name, "WebRequest is not allowed. Please add \"", Ip, "\" in Tools > Options > Expert Advisors"); ExpertRemove(); break;
-      case 5272: Print(MTLive::self_name, "Server is not available"); break;
-      case 5273: Print(MTLive::self_name, "Server refuses connection"); break;
-      default: Print(MTLive::self_name, "Error ", code, ": can not connect to server");
+      case 5272: Print(MTLive::self_name, "Server is not available. Retry in ", delay, "s"); break;
+      case 5273: Print(MTLive::self_name, "Server refuses connection. Retry in ", delay, "s"); break;
+      default: Print(MTLive::self_name, "Error ", code, ": can not connect to server. Retry in ", delay, "s");
    }
+}
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+int MTLive::checkConnection() {
+   // Reconnect if socket is not writable
+   if ( !SocketIsWritable(MTLive::socket) ) {
+      SocketClose(MTLive::socket);
+
+      MTLive::socket = SocketCreate(SOCKET_DEFAULT);
+      if ( MTLive::socket == INVALID_HANDLE ) {            
+         return -1;
+      }
+   
+      bool connected = SocketConnect(MTLive::socket, MTLive::serverIp, MTLive::serverPort, 1000);
+      if ( !connected ) {
+         return -1;
+      }
+   } else {
+      return 0;
+   }
+   
+   // Connection was just established
+   return 1;
 }
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 int MTLive::Update() {
    static bool sync = false;
-   // Try to reconnect if socket is not writable
-   if ( !SocketIsWritable(MTLive::socket) ) {
-      SocketClose(MTLive::socket);
-
-      MTLive::socket = SocketCreate(SOCKET_DEFAULT);
-      if ( MTLive::socket == INVALID_HANDLE ) {            
-         err_print(GetLastError());
-         return -1;
-      }
+   static datetime lastTry;
+   static int delaySeconds = 0;
    
-      bool connected = SocketConnect(MTLive::socket, MTLive::serverIp, MTLive::serverPort, 1000);
-      if ( !connected ) {
-         err_print(GetLastError());
-         return -1;
+   // Progressive delay in case of network errors
+   if ( delaySeconds > 0 ) {
+      if ( lastTry + delaySeconds > TimeLocal() ) {
+         return 0;
       }
-      sync = true;
-   }
-
-   // Failed to reconnect
-   if ( !SocketIsWritable(MTLive::socket) ) {
-      return 01;
    }
    
-   if ( sync ) Print(MTLive::self_name, "Connection is successful");
+   lastTry = TimeLocal();
+
+   switch (delaySeconds) {
+      case 0: delaySeconds = 1; break;
+      case 32: break;
+      default: delaySeconds *= 2;
+   }
+   
+   // Check for server connection
+   int state = checkConnection();
+   switch (state) {
+      case 1:
+         sync = true;
+         Print(MTLive::self_name, "Connection is successful");
+         break;
+      case -1:
+         err_print(GetLastError(), delaySeconds);
+         return -1;
+   }
    
    // Send encoded message
    TradesMsg msg;
    MTLive::compose_data(msg, sync);
    bool sent = MTTransport::Send(socket, msg, sync);
    if ( !sent ) {
-      err_print(GetLastError());
+      err_print(GetLastError(), delaySeconds);
       return -1;
    }
 
@@ -129,18 +159,19 @@ int MTLive::Update() {
    ResponseMsg resp;
    bool received = MTTransport::Recv(socket, resp);
    if ( !received ) {
-      err_print(GetLastError());
+      err_print(GetLastError(), delaySeconds);
       return -1;
    }
    
    if ( !empty(resp.Message) ) Print(MTLive::self_name, resp.Message);
    if ( !empty(resp.Error) ) {
       Print(MTLive::self_name, "Server returned error: ", resp.Error);
-      ExpertRemove();
       return -1;
    }
 
    sync = false;
+   delaySeconds = 0;
+
    return 0;
 }
 
