@@ -14,6 +14,7 @@
 - [Системные требования](/lang/README_ru.md#системные-требования)
 - [Ограничения](/lang/README_ru.md#ограничения)
 - [Установка и запуск](/lang/README_ru.md#установка-и-запуск)
+- [Сервер](/lang/README_ru.md#сервер)
 - [Swagger API](/lang/README_ru.md#swagger-api)
 - [Лицензия](/lang/README_ru.md#лицензия)
 
@@ -77,6 +78,9 @@ void OnDeinit(const int reason) {
 
 Советник выводит рабочие сообщения в закладку `Experts`.
 Если все было сделано правильно, торговые данные уже доступны `online`. Можно открыть интернет-браузер и перейти по адресу `metatrader.live/accounts/{Page name}`.
+
+## Сервер
+[Код для серверной части](https://github.com/brajine/engine) также открыт под разрешительной MIT лицензией. Используйте по собственному усмотрению.
 
 ## Swagger API
 Формат отдаваемых сервером данных (REST API) можно посмотреть здесь: [metatrager.live/api/swagger](https://metatrader.live/api/swagger)
