@@ -14,6 +14,7 @@ Trade data publishing from the Metatrader terminal to the WEB (REST API, WebSock
 - [System requirements](https://github.com/brajine/metatrader-live/blob/master/README.md#system-requirements)
 - [Limitations](https://github.com/brajine/metatrader-live/blob/master/README.md#limitations)
 - [Installation](https://github.com/brajine/metatrader-live/blob/master/README.md#installation)
+- [Server](https://github.com/brajine/metatrader-live/blob/master/README.md#server)
 - [Swagger API](https://github.com/brajine/metatrader-live/blob/master/README.md#swagger-api)
 - [License](https://github.com/brajine/metatrader-live/blob/master/README.md#license)
 
@@ -75,6 +76,9 @@ After that, compile and attach the `MTLive` Expert Advisor to any chart, specify
 ![EA Input parameters](/img/input-parameters.png "EA Input parameters")
 
 The Expert Advisor displays working messages in the `Experts` tab. If everything is done correctly, the data will already be online. Point your Internet browser to `metatrader.live/accounts/{Page name}`.
+
+## Server
+The [server side code](https://github.com/brajine/engine) has also been open-sourced under permissive MIT license. Use it at your own.
 
 ## Swagger API
 API data format (REST API) is available: [metatrager.live/api/swagger](https://metatrader.live/api/swagger)
